@@ -1,0 +1,114 @@
+# Ignore Python virtual environments
+myvenv/
+venv/
+.venv/
+env/
+.env
+
+# Byte-compiled / optimized / compiled Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+venv/
+.env/
+.venv/
+env/
+env.bak/
+.virtualenv/
+.virtualenvs/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Python-specific build files
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Celery task results
+celerybeat-schedule
+celerybeat.pid
+
+# Logs
+*.log
+*.out
+*.err
+logs/
+debug.log
+
+# pytest 
+.cache/
+htmlcov/
+.tox/
+.pytest_cache/
+
+# Coverage files
+.coverage
+*.cover
+*.coverage.*
+
+# Mypy type-checking cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# PyCharm project files
+.idea/
+
+# VS Code project files
+.vscode/
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows system files
+Thumbs.db
+desktop.ini
+
+# Temporary / Backup files
+*.bak
+*.swp
+*.tmp
+*.temp
+*.backup
+*.orig
+
+# Archives and packages
+*.tar.gz
+*.zip
+*.7z
+*.rar
+
+# Ignore secrets and sensitive information
+config.json
+secrets.json
+keys.json
+
+# Other personal or temporary project files
+*.pid
+*.lock
+*.spec
