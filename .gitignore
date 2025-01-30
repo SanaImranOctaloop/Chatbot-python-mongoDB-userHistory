@@ -112,3 +112,5 @@ keys.json
 *.pid
 *.lock
 *.spec
+
+MONGODB_URI=mongodb+srv://zainoctaloopp:octaloOp@myzpt.r1usk.mongodb.net/myzpt.user?retryWrites=true&w=majority

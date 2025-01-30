@@ -1,17 +1,24 @@
-# Importing Libraries
-import os 
-from dotenv import load_dotenv
-from pymongo import MongoClient
+from fastapi import FastAPI
+from schema import User, Conversation
+import db
 
-# Loading Environment Variables
-load_dotenv()
-MONGODB_URI = os.environ["MONGODB_URI"]
+app = FastAPI()
 
-# Creating a MongoDB Client
-client = MongoClient(MONGODB_URI)
+@app.get('/')
+def root():
+    return {'message': 'Welcome to the app!'}
 
-# Enlisting all the databases in a cluster
-for db_name in client.list_database_names():
-    print(db_name)
-    
-client.close() 
+@app.get('/all')
+def get_all():
+    data = db.all()
+    return {'Data' : data}
+
+@app.post('/createUser')
+def create(user: User):
+    user = db.createUser(user.username, user.password, user.email)
+    return {'Instance inserted':True, 'User ID':user}
+
+@app.post('/createConv')
+def create(conv: Conversation):
+    conversation = db.createConv(conv.userID, conv.conversations, conv.query, conv.botResponse)
+    return {'Instance inserted':True, 'Conversation ID':conversation}
