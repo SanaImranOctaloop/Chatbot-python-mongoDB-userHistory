@@ -15,10 +15,10 @@ def get_all():
 
 @app.post('/createUser')
 def create(user: User):
-    user = db.createUser(user.username, user.password, user.email)
-    return {'Instance inserted':True, 'User ID':user}
+    User = db.createUser(user.username, user.password, user.email)
+    return {'Instance inserted':True, 'User ID':User}
 
 @app.post('/createConv')
 def create(conv: Conversation):
-    conversation = db.createConv(conv.userID, conv.conversations, conv.query, conv.botResponse)
+    conversation = db.createConv(conv.userID, conv.conversations, conv.query, conv.response, conv.chat)
     return {'Instance inserted':True, 'Conversation ID':conversation}
