@@ -5,8 +5,8 @@ import os
 load_dotenv()
 
 def get_database():
-    connection_string = os.getenv("MONGODB_URI")
-    if not connection_string:
+    MONGODB_URI = os.getenv("MONGODB_URI")
+    if not MONGODB_URI:
         raise Exception("MONGODB_URI is not set in the .env file")
-    #client = MongoClient(connection_string)
-    return MongoClient(connection_string)['chatbot']
+    #client = MongoClient(MONGODB_URI)
+    return MongoClient(MONGODB_URI)['chatbot']
