@@ -1,23 +1,35 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from typing import List
+
+
+class Message(BaseModel):
+    query: str
+    response: str
+
 
 class User(BaseModel):
-    username : str
-    password : str
-    email: str
-    conversations : list
-    history : dict
-    
-    
+    username: str
+    email: EmailStr
+    hashed_password: str 
+    conversations: List[str] = []
+
+
+class UserSignup(BaseModel):
+    username: str
+    email: EmailStr
+    password: str  
+
+class Login(BaseModel):
+    username: str
+    password: str
+
+
+class UpdatePassword(BaseModel):
+    old_password: str
+    new_password: str
+
+
 class Conversation(BaseModel):
-    userID : str
-    conversations : list
-    query : str
-    response : str
-    chat : list
+    userID: str
+    chat: List[Message]
     
-    # def chats(self, query, response):
-    #     self.query = query
-    #     self.response = response
-    #     return [{"Query": self.query, "Response": self.response}]
-    
-    # chat = chats()
