@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from schema import UserSignup, Login, UpdatePassword
 from db import users_collection
+from bson import ObjectId
 from LLM import new_chat_with_mistral, existing_chat_with_mistral
 from auth import get_current_user, verify_password, create_access_token, oauth2_scheme
 import db, uvicorn
@@ -39,11 +40,16 @@ def login(user: Login):
 @app.post("/add_chat/{convID}")
 def chat_with_ai(convID: str, user_query: str, token: str = Depends(oauth2_scheme)):
     response = existing_chat_with_mistral(convID, user_query)
+    db.conv_collection.update_one(
+    {"_id": ObjectId(convID)},
+    {"$push": {"Chat": {"Query": user_query, "Response": response}}}
+)
     return {"success": True, "response": response}
 
 
 @app.post("/new_chat/{username}")
 def new_chat_with_ai(username: str, user_query: str, token: str = Depends(oauth2_scheme)):
+    print(token)
     response = new_chat_with_mistral(username, user_query)
     return {"success": True, "response": response}
 
@@ -52,6 +58,7 @@ def new_chat_with_ai(username: str, user_query: str, token: str = Depends(oauth2
 # USER ROUTES 
 @app.get("/allUsers")
 def get_all_users(token: str = Depends(oauth2_scheme)):
+    print(token)
     data = db.allUsers()
     return {"success": True, "data": data}
 

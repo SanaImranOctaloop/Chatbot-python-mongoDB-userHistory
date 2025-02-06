@@ -25,23 +25,57 @@ def createUser(user: UserSignup):
     return str(response.inserted_id)
 
 
+# def createConv(username: str, query: str, response: str) -> dict:
+#     Query = str(query)
+#     Response = str(response)
+    
+#     message = dict(Message(query=Query, response=Response))
+#     conversation_data = {
+#         "Username": username,
+#         "Chat": [message]
+#     }
+#     try:
+#         result = conv_collection.insert_one(conversation_data)
+#         convID = str(result.inserted_id)
+#         users_collection.update_one(
+#             {"Username": username},
+#             {"$push": {"Conversations": convID}}
+#         )
+#         return {"success": True, "conversation_id": convID, "chat": conversation_data}
+#     except Exception as e:
+#         return {"error": f"Failed to create conversation: {str(e)}"}
+
 def createConv(username: str, query: str, response: str) -> dict:
-    message = dict(Message(query=query, response=response))
+    query = str(query)
+    response = str(response)
+
+    message = {"Query": query, "Response": response}
     conversation_data = {
         "Username": username,
         "Chat": [message]
     }
+    print(f"Saving conversation for {username}: {conversation_data}") 
+
     try:
         result = conv_collection.insert_one(conversation_data)
-        convID = str(result.inserted_id)
+        convID = str(result.inserted_id) 
+
         users_collection.update_one(
             {"Username": username},
             {"$push": {"Conversations": convID}}
         )
-        return {"success": True, "conversation_id": convID, "chat": conversation_data}
-    except Exception as e:
-        return {"error": f"Failed to create conversation: {str(e)}"}
+        conversation_data["_id"] = convID  
+        print(f"✅ Conversation saved with ID: {convID}")  
 
+        return {
+            "success": True,
+            "conversation_id": convID,
+            "chat": conversation_data
+        }
+
+    except Exception as e:
+        print(f"❌ Error in createConv: {str(e)}") 
+        return {"error": f"Failed to create conversation: {str(e)}"}
 
 
 
@@ -63,13 +97,25 @@ def allConv():
     return [{**conv, "_id": str(conv["_id"])} for conv in conv_collection.find({})]
 
 
+# def get_oneConv(convID):
+#     try:
+#         conv = conv_collection.find_one({"_id": ObjectId(convID)})
+#         if not conv:
+#             return {"error": "Conversation not found."}
+#         conv["_id"] = str(conv["_id"])
+#         return conv
+#     except:
+#         return {"error": "Invalid conversation ID format"}
+
 def get_oneConv(convID):
     try:
         conv = conv_collection.find_one({"_id": ObjectId(convID)})
         if not conv:
             return {"error": "Conversation not found."}
-        conv["_id"] = str(conv["_id"])
+
+        conv["_id"] = str(conv["_id"])  
         return conv
+
     except:
         return {"error": "Invalid conversation ID format"}
 
@@ -96,18 +142,26 @@ def updateUserPassword(username, update_data: UpdatePassword):
 
 
 def updateConv(convID: str, query: str, response: str) -> dict:
+    print(f"Updating DB for {convID} with new message: {query} -> {response}")
     try:
         if not conv_collection.find_one({"_id": ObjectId(convID)}):
             return {"error": "Conversation not found."}
 
         new_message = dict(Message(query=query, response=response))
-        conv_collection.update_one(
+        
+        existing_doc = conv_collection.find_one({"_id": ObjectId(convID)})
+        print(f"Before update: {existing_doc}")
+
+        db.conv_collection.update_one(
             {"_id": ObjectId(convID)},
-            {"$push": {"Chat": new_message}}
-        )
+            {"$setOnInsert": {"Chat": []}, "$push": {"Chat": {"Query": query, "Response": response}}}, upsert=True
+            )
+
+        updated_doc = conv_collection.find_one({"_id": ObjectId(convID)})
+        print(f"After update: {updated_doc}")
         return {"success": True, "message": "Conversation updated."}
-    except:
-        return {"error": "Invalid conversation ID format"}
+    except Exception as e:
+        return {"error": e}
 
 
 

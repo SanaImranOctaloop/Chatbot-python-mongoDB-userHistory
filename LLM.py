@@ -24,6 +24,8 @@ def existing_chat_with_mistral(convID: str, user_query: str) -> dict:
     try:
         response = ollama.chat(model="mistral", messages=[{"role": "user", "content": formatted_prompt}])
         ai_response = response["message"]
+        print("LLM raw response:", response)
+        print(f"\nUpdating conversation {convID} with user query: {user_query} and AI response: {ai_response}")
         updateConv(convID, user_query, ai_response)
         return {"success": True, "conversation_id": convID, "response": ai_response}
     except Exception as e:
@@ -31,11 +33,29 @@ def existing_chat_with_mistral(convID: str, user_query: str) -> dict:
 
 
 
-def new_chat_with_mistral(username: str, user_query: str) -> Dict:
+# def new_chat_with_mistral(username: str, user_query: str) -> dict:
+#     try:
+#         response = ollama.chat(model="mistral", messages=[{"role": "user", "content": user_query}])
+#         ai_response = response["message"]
+#         conversation_id = createConv(username=username, query=user_query, response=ai_response)
+#         return {"success": True, "conversation_id": conversation_id, "response": ai_response}
+#     except Exception as e:
+#         return {"error": f"Error generating response: {str(e)}"}
+    
+    
+def new_chat_with_mistral(username: str, user_query: str) -> dict:
     try:
+        print(f"🔹 Received query from {username}: {user_query}")  # Debug log
+
         response = ollama.chat(model="mistral", messages=[{"role": "user", "content": user_query}])
-        ai_response = response["message"]
+        ai_response = response["message"]  # Extract response text
+        print(f"✅ AI Response: {ai_response}")  # Debug log
+
         conversation_id = createConv(username=username, query=user_query, response=ai_response)
+        print(f"✅ Conversation Created: {conversation_id}")  # Debug log
+
         return {"success": True, "conversation_id": conversation_id, "response": ai_response}
+
     except Exception as e:
+        print(f"❌ Error in new_chat_with_mistral: {str(e)}")  # Debug log
         return {"error": f"Error generating response: {str(e)}"}
